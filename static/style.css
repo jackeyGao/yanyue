@@ -1,0 +1,50 @@
+.wrapper {
+    background: white;
+}
+
+.fs {
+    margin: 1em;
+    float: right;
+    font-size: 2em;
+    line-height: 150%;
+    writing-mode:tb-rl;
+    letter-spacing: 2px;
+    font-family: STKaiti,KaiTi,sans-serif;
+    white-space: pre-wrap;
+}
+
+.input {
+  margin-top: 1em;
+}
+
+
+
+.ui.form textarea:not([rows]) {
+    height: 50%;
+    min-height: 50%;
+    max-height: 100%;
+}
+
+.ui.form textarea {
+    border: 0;
+    font-size: 1.5em;
+    font-family: STKaiti,KaiTi,sans-serif;
+    line-height: 150%;
+}
+
+#title input {
+    border: none;
+    border-left: 0.3em #F3F3F4 solid;
+    border-radius: none;
+    border-radius: 0px;
+    font-size: 2em;
+    font-family: STKaiti,KaiTi,sans-serif;
+}
+
+.shuimo {
+    color: #2C3E50;
+}
+
+.kaiti {
+    font-family: STKaiti,KaiTi,sans-serif!important;
+}

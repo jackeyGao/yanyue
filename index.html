@@ -1,0 +1,93 @@
+<html data-framework="vue">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>memeDa</title>
+    <link href="/static/semantic.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+  </head>
+
+  <body>
+  	<div id="app" class="ui two column container divided grid" style="margin: 14px;">
+  	  <div class="column" style="height: 100%;">
+  	    <div class="wrapper">
+  	   	  <div class="fs">{{title}}<br />{{content}}</div>
+  	   	</div>
+  	  </div>
+  	  <div class="column" style="height: 100%;">
+  	  	  <div class="ui popup" style="width: 300px;">
+            <div class="ui one column grid">
+              <div class="column">
+                <h3 v-if="posts.length > 0" class="ui header kaiti">列表</h3>
+                <h3 v-else class="ui header kaiti">无历史</h3>
+                <div v-if="posts.length > 0" class="ui kaiti selection link list">
+                  <a class="item" v-for="post in posts">{{ post.title }}</a>
+                </div>
+              </div>
+            </div>
+          </div> 
+  	  	<div id="quickmenu" style="float: right;">
+  	  	  <i class="large shuimo plus icon"></i>
+  	  	  <i class="large shuimo list icon"></i>	  	
+        </div>
+
+  	   	<div class="ui form" style="margin-top: 30px;">
+  	   	  <div class="field">
+  		    <div id="title" class="ui large input">
+			  <input v-model="title" type="text" placeholder="无题">
+			</div>
+  		  </div>
+  	   	  <div class="fluid field">
+  	   	    <textarea v-model="content" placeholder="内容文"></textarea>
+  	   	  </div>
+  	   	</div>
+  	  </div>
+  	</div>
+  </body>
+  <script src="/static/js/vue.js"></script>
+  <script src="/static/js/jquery.js"></script>
+  <script src="/static/js/semantic.min.js"></script>
+  <script>
+
+  $('#quickmenu .list')
+   .popup({
+     hoverable  : true,
+     position   : 'bottom center',
+     popup: ".popup"
+   });
+
+  var STORAGE_KEY = 'yanyue';
+ 
+  Storage = {
+    fetch: function () {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    },
+    save: function (tasks) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    },
+  };
+
+  test_posts = []
+  	{}
+  ]
+
+  var vm = new Vue({
+  	el: '#app',
+  	data: {
+  		title: "",
+    	content: "",
+    	posts: Storage.fetch()
+    },
+    watch: {
+      posts: {
+          handler: function(posts) {
+              Storage.save(posts);
+          },
+          deep: true
+      }
+  	},
+  })
+
+  console.log(vm.posts);
+  </script>
+ </html>
