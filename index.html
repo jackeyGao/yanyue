@@ -8,65 +8,76 @@
   </head>
 
   <body>
-       	<div id="app" class="ui equal width container divided grid">
-       	  <div id="show"  class="column" style="height: 100%;">
-            <div style="margin-top: 14px;width: 100%; height: 35px;">
-              <div style="float: right;">
-              <i @click="mode('preview')" class="large grey maximize icon"></i>
-              <i @click="recle('preview')" class="large grey arrow circle left icon" style="display: none;"></i>
+    <div id="app" class="ui equal width container divided grid">
+      <div id="show"  class="column" style="height: 100%;">
+      <div style="margin-top: 14px;width: 100%; height: 35px;">
+        <div style="float: right;">
+        <i @click="mode('preview')" class="large grey maximize icon"></i>
+        <i @click="recle('preview')" class="large grey arrow circle left icon" style="display: none;"></i>
+        </div>
+      </div>
+          <div class="fs">{{title}}<br /><br />{{content}}</div>
+      </div>
+      <div id="edit" class="column" style="height: 100%;">
+        <div id="quickmenu" style="margin-top: 14px;width: 100%; ">
+        <div style="float: right;">
+            <i @click="newPost()" class="large shuimo plus icon"></i>
+            <div class="ui floating dropdown icon">
+            <i class="large list icon"></i>
+            <div class="menu">
+              <div id="search" class="ui icon search input">
+                <i class="search icon"></i>
+                <input type="text" placeholder="搜索">
               </div>
-            </div>
-       	      <div class="fs">{{title}}<br /><br />{{content}}</div>
-       	  </div>
-       	  <div id="edit" class="column" style="height: 100%;">
-       	    <div class="ui popup" style="width: 300px;">
-            <div class="ui one column grid">
-              <div class="column">
-                <h3 v-if="posts.length > 0" class="ui header kaiti">列表</h3>
-                <h3 v-else class="ui header kaiti">无历史</h3>
-                <div id="posts" v-if="posts.length > 0" class="ui kaiti selection link list">
-                  <div class="item" @click="editPost(post)" v-for="post in posts">
-                    <div class="right floated content">
-                      <i @click="removePost(post)" class="grey remove icon"></i>
-                    </div>
-                    <div class="content" v-text="post.title|default_if_none"></div>
-                    </div>
+              <div class="divider"></div>
+              <div class="header">
+                <template v-if="posts.length > 0">
+                  列表
+                  <span style="float: right;" class="grey text" @click="clear()">清空</span>
+                </template>
+                <template v-else >
+                  无历史
+                  <span style="float: right;" class="grey text" @click="load()">载入名诗</span>
+                </template>
+              </div>
+              <div id="posts" v-if="posts.length > 0" class="left kaiti scrolling menu">
+                <div class="item" @click="editPost(post)" v-for="post in posts">
+                  <div class="right floated content">
+                    <i @click="removePost(post)" class="grey remove icon"></i>
+                  </div>
+                  <div class="content">
+                    <div class="ui grey empty circular label"></div>
+                    {{ post.title|default_if_none|slice }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-       	  <div id="quickmenu" style="margin-top: 14px;width: 100%; ">
-             <div style="float: right;">
-       	    <i @click="newPost()" class="large shuimo plus icon"></i>
-       	    <i class="large shuimo list icon"></i>
-            </div>
+        </div>
+      </div>
+        <div class="ui form" style="margin-top: 28px;">
+          <div class="field">
+    	      <div id="title" class="ui large input">
+    		      <input v-model="title" type="text" placeholder="无题">
+    		    </div>
+    	    </div>
+          <div class="fluid field">
+           	<textarea v-model="content" rows="10" placeholder="内容文"></textarea>
           </div>
-
-       	       	<div class="ui form" style="margin-top: 28px;">
-       	       	  <div class="field">
-       		    <div id="title" class="ui large input">
-       			  <input v-model="title" type="text" placeholder="无题">
-       			</div>
-       		  </div>
-       	       	  <div class="fluid field">
-       	       	    <textarea v-model="content" rows="10" placeholder="内容文"></textarea>
-       	       	  </div>
-       	       	</div>
-       	  </div>
-       	</div>
+        </div>
+      </div>
+    </div>
   </body>
   <script src="/static/js/vue.js"></script>
   <script src="/static/js/jquery.js"></script>
   <script src="/static/js/semantic.min.js"></script>
   <script>
-
-  $('#quickmenu .list')
-   .popup({
-     hoverable  : true,
-     position   : 'bottom center',
-     popup: ".popup"
-   });
-
+  $('.dropdown')
+      .dropdown({
+        fullTextSearch: true,
+      })
+  ;
+  
   var STORAGE_KEY = 'yanyue';
 
   var filters = {
@@ -114,6 +125,15 @@
     // `input` === `this.userInput`
     if (value === "") {
       return "无标题";
+    } else {
+      return value;
+    }
+  })
+
+  Vue.filter('slice', function (value) {
+    // `input` === `this.userInput`
+    if (value.length > 10) {
+      return value.slice(0,10) + '...';
     } else {
       return value;
     }
@@ -189,6 +209,20 @@
           $('#show').hide();
         }
       },
+      load: function() {
+        $.getJSON('/tang300/tang300.v0.json', function(data) { 
+          $.each(data, function(index, array) {
+            var ob = {
+              content: array[3].join('\n'),
+              title: array[1] + '·' + array[2]
+            }
+            vm.posts.push(ob);
+          })
+        });
+      },
+      clear: function() {
+        this.posts = [];
+      }
     }
   })
   </script>
