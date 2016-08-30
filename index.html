@@ -8,41 +8,48 @@
   </head>
 
   <body>
-  	<div id="app" class="ui two column container divided grid" style="margin: 14px;">
-  	  <div class="column" style="height: 100%;">
-  	    <div class="wrapper">
-  	   	  <div class="fs">{{title}}<br />{{content}}</div>
-  	   	</div>
-  	  </div>
-  	  <div class="column" style="height: 100%;">
-  	  	  <div class="ui popup" style="width: 300px;">
+       	<div id="app" class="ui equal width container divided grid">
+       	  <div id="show"  class="column" style="height: 100%;">
+            <div style="float: right;margin-top: 14px;">
+              <i @click="mode('preview')" class="large grey maximize icon"></i>
+              <i @click="recle('preview')" class="large grey arrow circle left icon" style="display: none;"></i>
+            </div>
+       	      <div class="fs">{{title}}<br /><br />{{content}}</div>
+       	  </div>
+       	  <div id="edit" class="column" style="height: 100%;">
+       	    <div class="ui popup" style="width: 300px;">
             <div class="ui one column grid">
               <div class="column">
                 <h3 v-if="posts.length > 0" class="ui header kaiti">列表</h3>
                 <h3 v-else class="ui header kaiti">无历史</h3>
-                <div v-if="posts.length > 0" class="ui kaiti selection link list">
-                  <a class="item" v-for="post in posts">{{ post.title }}</a>
+                <div id="posts" v-if="posts.length > 0" class="ui kaiti selection link list">
+                  <div class="item" @click="editPost(post)" v-for="post in posts">
+                    <div class="right floated content">
+                      <i @click="removePost(post)" class="grey remove icon"></i>
+                    </div>
+                    <div class="content" v-text="post.title|default_if_none"></div>
+                    </div>
                 </div>
               </div>
             </div>
-          </div> 
-  	  	<div id="quickmenu" style="float: right;">
-  	  	  <i class="large shuimo plus icon"></i>
-  	  	  <i class="large shuimo list icon"></i>	  	
-        </div>
+          </div>
+       	  <div id="quickmenu" style="float: right;margin-top: 14px;">
+       	    <i @click="newPost()" class="large shuimo plus icon"></i>
+       	    <i class="large shuimo list icon"></i>
+          </div>
 
-  	   	<div class="ui form" style="margin-top: 30px;">
-  	   	  <div class="field">
-  		    <div id="title" class="ui large input">
-			  <input v-model="title" type="text" placeholder="无题">
-			</div>
-  		  </div>
-  	   	  <div class="fluid field">
-  	   	    <textarea v-model="content" placeholder="内容文"></textarea>
-  	   	  </div>
-  	   	</div>
-  	  </div>
-  	</div>
+       	       	<div class="ui form" style="margin-top: 30px;">
+       	       	  <div class="field">
+       		    <div id="title" class="ui large input">
+       			  <input v-model="title" type="text" placeholder="无题">
+       			</div>
+       		  </div>
+       	       	  <div class="fluid field">
+       	       	    <textarea v-model="content" rows="10" placeholder="内容文"></textarea>
+       	       	  </div>
+       	       	</div>
+       	  </div>
+       	</div>
   </body>
   <script src="/static/js/vue.js"></script>
   <script src="/static/js/jquery.js"></script>
@@ -57,37 +64,128 @@
    });
 
   var STORAGE_KEY = 'yanyue';
- 
+
+  var filters = {
+      all: function (posts) {
+          return posts;
+      },
+      valid: function (posts) {
+        return posts.filter(function (post) {
+          return post.title && post.content;
+        })
+      },
+      get: function (posts, id) {
+          return posts.filter(function (post) {
+              return post.id === id;
+          });
+      }
+  };
+
   Storage = {
     fetch: function () {
         return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     },
-    save: function (tasks) {
+    save: function (posts) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
     },
   };
 
-  test_posts = []
-  	{}
-  ]
+  var posts = Storage.fetch();
+  if (posts.length === 0) {
+    posts.push({
+      content: "明春花秋月何时了？\n" + 
+        "往事知多少？\n" + 
+        "小楼昨夜又东风，\n" +
+        "故国不堪回首月明中。\n" +
+        "雕栏玉砌应犹在，\n" +
+        "只是朱颜改。\n" +
+        "问君能有几多愁？\n" +
+        "恰似一江春水向东流。",
+      title: "虞美人·李煜"
+    })
+  }
+
+  // 过滤器
+  Vue.filter('default_if_none', function (value) {
+    // `input` === `this.userInput`
+    if (value === "") {
+      return "无标题";
+    } else {
+      return value;
+    }
+  })
 
   var vm = new Vue({
-  	el: '#app',
-  	data: {
-  		title: "",
-    	content: "",
-    	posts: Storage.fetch()
+    el: '#app',
+    data: {
+      editing: posts[0],
+      title: posts[0].title,
+      content: posts[0].content,
+      posts: posts
     },
     watch: {
       posts: {
           handler: function(posts) {
-              Storage.save(posts);
+            Storage.save(posts);
           },
           deep: true
-      }
-  	},
+      },
+      content: {
+          handler: function(content) {
+            if (this.editing.content !== content) {
+              var index = this.posts.indexOf(this.editing);
+              this.editing.content = content;
+              this.posts.$set(index, this.editing);
+            }
+         }
+      },
+      title: {
+          handler: function(title) {
+            if (this.editing.title !== title) {
+              var index = this.posts.indexOf(this.editing);
+              this.editing.title = title;
+              this.posts.$set(index, this.editing);
+            }
+         }
+      },
+    },
+    methods: {
+      editPost: function(post) {
+        this.editing = post;
+        this.content = post.content;
+        this.title = post.title;
+      },
+      newPost: function(post) {
+        var post = { content: "", title: "" }
+        this.editing = post;
+        this.posts.push(post);
+        this.title = post.title;
+        this.content = post.content
+      },
+      removePost: function(post) {
+        this.posts.$remove(post);
+      },
+      mode: function(modeName) {
+        if (modeName === 'preview') { 
+          $('#edit').hide();
+          $('#show .maximize').toggle();
+          $('#show .arrow').toggle();
+        } 
+        if (modeName === 'edit') {
+          $('#show').hide();
+        }
+      },
+      recle: function(modeName) {
+        if (modeName === 'preview') { 
+          $('#edit').show();
+          $('#show .maximize').toggle();
+          $('#show .arrow').toggle();
+        } 
+        if (modeName === 'edit') {
+          $('#show').hide();
+        }
+      },
+    }
   })
-
-  console.log(vm.posts);
   </script>
  </html>
