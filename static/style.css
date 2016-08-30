@@ -4,6 +4,8 @@
     font-size: 2em;
     line-height: 150%;
     writing-mode:tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
     letter-spacing: 2px;
     font-family: STKaiti,KaiTi,sans-serif;
     white-space: pre-wrap;
