@@ -1,5 +1,4 @@
 .fs {
-    margin: 1em;
     float: right;
     font-size: 2em;
     line-height: 150%;
@@ -7,7 +6,7 @@
     -webkit-writing-mode: vertical-rl;
     writing-mode: vertical-rl;
     letter-spacing: 2px;
-    font-family: STKaiti,KaiTi,sans-serif;
+    font-family: STKaiti,KaiTi,HiraKakuProN-W3,sans-serif!important;
     white-space: pre-wrap;
     overflow-x: scroll; 
     height: inherit;
@@ -16,8 +15,6 @@
 .input {
   margin-top: 1em;
 }
-
-
 
 .ui.form textarea:not([rows]) {
     height: 50%;
@@ -28,7 +25,7 @@
 .ui.form textarea {
     border: 0;
     font-size: 1.5em;
-    font-family: STKaiti,KaiTi,sans-serif;
+    font-family: STKaiti,KaiTi,HiraKakuProN-W3,sans-serif!important;
     line-height: 150%;
 }
 
@@ -38,7 +35,7 @@
     border-radius: none;
     border-radius: 0px;
     font-size: 2em;
-    font-family: STKaiti,KaiTi,sans-serif;
+    font-family: STKaiti,KaiTi,HiraKakuProN-W3,sans-serif!important;
 }
 
 .shuimo {
@@ -64,4 +61,25 @@
 
 #posts .item:hover .remove.icon {
     display: block;
+}
+
+
+@media only screen and (max-width: 767px) {
+  .ui.container {
+    width: auto !important;
+    margin-left: 0em !important;
+    margin-right: 0em !important;
+  }
+  .fs {
+    font-size: 12px;
+    font-family: STKaiti,KaiTi,HiraKakuProN-W6,sans-serif!important;
+  }
+
+  #title input {
+    font-size: 14px;
+  }
+
+  .ui.form textarea {
+    font-size: 12px;
+  }
 }

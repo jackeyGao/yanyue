@@ -10,9 +10,11 @@
   <body>
        	<div id="app" class="ui equal width container divided grid">
        	  <div id="show"  class="column" style="height: 100%;">
-            <div style="float: right;margin-top: 14px;">
+            <div style="margin-top: 14px;width: 100%; height: 35px;">
+              <div style="float: right;">
               <i @click="mode('preview')" class="large grey maximize icon"></i>
               <i @click="recle('preview')" class="large grey arrow circle left icon" style="display: none;"></i>
+              </div>
             </div>
        	      <div class="fs">{{title}}<br /><br />{{content}}</div>
        	  </div>
@@ -33,12 +35,14 @@
               </div>
             </div>
           </div>
-       	  <div id="quickmenu" style="float: right;margin-top: 14px;">
+       	  <div id="quickmenu" style="margin-top: 14px;width: 100%; ">
+             <div style="float: right;">
        	    <i @click="newPost()" class="large shuimo plus icon"></i>
        	    <i class="large shuimo list icon"></i>
+            </div>
           </div>
 
-       	       	<div class="ui form" style="margin-top: 30px;">
+       	       	<div class="ui form" style="margin-top: 28px;">
        	       	  <div class="field">
        		    <div id="title" class="ui large input">
        			  <input v-model="title" type="text" placeholder="无题">
